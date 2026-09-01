@@ -82,12 +82,12 @@ class Network(object):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for x, y in mini_batch:
-            delta_nabla_b, delta_nabla_w = self.backprop(x, y)              # TODO (Tarea):Documentar este bloque de lineas de codigo
-            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]   # Es decir, explicar lo que hace cada linea.
-            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]   #
-        self.weights = [w-(eta/len(mini_batch))*nw                          #
+            delta_nabla_b, delta_nabla_w = self.backprop(x, y)              # Recorre cada mini_batch y calcula el gradiente para b y w y asigna los valores a delta_nabla_b y delta_nabla_w
+            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]   # Suma el gradiente recien calculado a los acumulaods, la suma es de cada capa, por eso se hace zip de nabla_b y delta_nabla_b
+            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]   # hace lo mismo que la linea anterior pero para w
+        self.weights = [w-(eta/len(mini_batch))*nw                          # Utiliza la formula matematica de descenso de gradiente para actualizar los pesos, esto se hacepara cada capa.
                         for w, nw in zip(self.weights, nabla_w)]            #
-        self.biases = [b-(eta/len(mini_batch))*nb                           #
+        self.biases = [b-(eta/len(mini_batch))*nb                           # Hace lo mismo que la linea anterior pero para b
                        for b, nb in zip(self.biases, nabla_b)]              #
 
     def backprop(self, x, y):
@@ -103,14 +103,17 @@ class Network(object):
         zs = [] # list to store all the z vectors, layer by layer
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b             #TODO: indicar las dimensiones de z, w, activation y b
-            zs.append(z)
-            activation = sigmoid(z)
-            activations.append(activation)
+            zs.append(z)                            # Las dimensiones de z son (n_l, 1) donde n_l es el numero de neuronas en la capa l
+            activation = sigmoid(z)                 # w tiene dimensiones (n_l, n_{l-1})
+            activations.append(activation)          # activation tiene dimensiones (n_{l-1}, 1)  
+                                                    #b tiene dimensiones (n_l, 1)
         # backward pass
         delta = self.cost_derivative(activations[-1], y) * \
             sigmoid_prime(zs[-1])
         nabla_b[-1] = delta                         #TODO: indicar la dimension de delta
+                                                    # Las dimensiones de delta son (n_L,1) con n_L el numero de neuronas en la capa L
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())        #TODO: indicar la dimension de nabla_w
+                                                                        # Las dimensiones de nabla_w son (n_l, n_{l-1})
         # Note that the variable l in the loop below is used a little
         # differently to the notation in Chapter 2 of the book.  Here,
         # l = 1 means the last layer of neurons, l = 2 is the
@@ -121,9 +124,9 @@ class Network(object):
             z = zs[-l]
             sp = sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp  #TODO: indicar la dimension de delta, self.weights[-l+1].transponse y sp
-            nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
-        return (nabla_b, nabla_w)
+            nabla_b[-l] = delta                                         # Delta tiene dimensiones (n_l, 1) 
+            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())  # Self.weights[-l+1].transpose() tiene dimensiones (n_{l+1}, n_l)
+        return (nabla_b, nabla_w)                                       # Sp tiene dimensiones (n_l, 1)
 
     def evaluate(self, test_data):
         """Return the number of test inputs for which the neural
@@ -135,8 +138,8 @@ class Network(object):
         return sum(int(x == y) for (x, y) in test_results)
 
     def cost_derivative(self, output_activations, y):
-        """Return the vector of partial derivatives \partial C_x /
-        \partial a for the output activations."""
+        """Return the vector of partial derivatives partial C_x /
+        partial a for the output activations."""
         return (output_activations-y)
 
 #### Miscellaneous functions
@@ -147,3 +150,20 @@ def sigmoid(z):
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
     return sigmoid(z)*(1-sigmoid(z))
+
+
+#Prueba de la red neuronal
+if __name__ == "__main__":
+    #Datos de entrenamiento
+    training_data = [(np.array([[0],[0]]), np.array([[0]])),
+                     (np.array([[0],[1]]), np.array([[1]])),
+                     (np.array([[1],[0]]), np.array([[1]])),
+                     (np.array([[1],[1]]), np.array([[0]]))]
+    #red
+    net = Network([2, 4, 1])
+    #entrenamiento
+    net.SGD(training_data, epochs=30000, mini_batch_size=4, eta=0.5)
+    #prueba
+    for x, y in training_data:
+        output = net.feedforward(x)
+        print(f"Input: {x.T}, Expected: {y}, Output: {output}") 

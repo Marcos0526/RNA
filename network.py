@@ -38,6 +38,11 @@ class Network(object):
         self.weights = [np.random.rand(y,x)/ np.sqrt(x) for x, y in zip(sizes[:-1], sizes[1:]) ] # Inicialización Xavier (Glorot)
         #[np.random.randn(y, x) #for x, y in zip(sizes[:-1], sizes[1:])]
 
+        #para RMSprop
+        #acumuladores de gradientes al cuadrado
+        self.squared_gradients_w = [np.zeros(w.shape) for w in self.weights]
+        self.squared_gradients_b = [np.zeros(b.shape) for b in self.biases]
+
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
         for b, w in zip(self.biases, self.weights):
@@ -68,7 +73,7 @@ class Network(object):
                 training_data[k:k+mini_batch_size]
                 for k in range(0, n, mini_batch_size)]
             for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta)
+                self.update_mini_batch_rmsprop(mini_batch, eta)
             if test_data:
                 print("Epoch {} : {} / {}".format(j,self.evaluate(test_data),n_test))
             else:
@@ -88,7 +93,30 @@ class Network(object):
         self.weights = [w-(eta/len(mini_batch))*nw                          # Utiliza la formula matematica de descenso de gradiente para actualizar los pesos, esto se hacepara cada capa.
                         for w, nw in zip(self.weights, nabla_w)]            #
         self.biases = [b-(eta/len(mini_batch))*nb                           # Hace lo mismo que la linea anterior pero para b
-                       for b, nb in zip(self.biases, nabla_b)]              #
+                       for b, nb in zip(self.biases, nabla_b)]  
+                    #
+
+    def update_mini_batch_rmsprop(self, mini_batch, eta, beta=0.9, epsilon=1e-8):
+
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        for x, y in mini_batch:
+            delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] #Lo mismo que el bloque de arriba 
+        
+        # actualizar los acumuladores de gradientes al cuadrado
+        self.squared_gradients_w = [beta * sg + (1 - beta) * (nw ** 2)
+                                    for sg, nw in zip(self.squared_gradients_w, nabla_w)]
+        self.squared_gradients_b = [beta * sg + (1 - beta) * (nb ** 2)
+                                    for sg, nb in zip(self.squared_gradients_b, nabla_b)]
+        
+        # Actualizar pesos y sesgos utilizando RMSprop
+        self.weights = [w - (eta / len(mini_batch)) * nw / (np.sqrt(sg) + epsilon)
+                        for w, nw, sg in zip(self.weights, nabla_w, self.squared_gradients_w)]
+        self.biases = [b - (eta / len(mini_batch)) * nb / (np.sqrt(sg) + epsilon)
+                       for b, nb, sg in zip(self.biases, nabla_b, self.squared_gradients_b)]
+
 
     def backprop(self, x, y):
         """Return a tuple ``(nabla_b, nabla_w)`` representing the
@@ -182,6 +210,6 @@ if __name__ == "__main__":
     training_data,
     epochs=30,
     mini_batch_size=10,
-    eta=3.0,
+    eta=0.001,
     test_data=test_data
     )

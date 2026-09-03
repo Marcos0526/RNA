@@ -5,17 +5,17 @@
  *  
  La declaración sigue el modelo de 6 campos de la UNED/ACRL AID Framework.*  
 **Estudiante**  
-- **Nombre y apellidos**:  
-- **Repositorio (URL)**:  
-- **Fecha de entrega**:  
+- **Nombre y apellidos**: Marcos Bautista Muñoa 
+- **Repositorio (URL)**:  https://github.com/Marcos0526/RNA
+- **Fecha de entrega**:  02/09/2026
 - **Asignatura**: Redes Neuronales Artificiales con Python  
   
 **1. Herramientas utilizadas**  
 | | | | |  
 |-|-|-|-|  
 | **Herramienta** | **Modalidad** | **Versión / Modelo** | **Plan (Free/Pro/etc.)** |   
-|   |   |   |   |   
-|   |   |   |   |   
+|  Vscode |   |   |  Free |   
+|  Chatgpt |   | basico  | Free  |   
    
 ***Modalidad*** *: Agente autónomo (Cursor Composer, Claude Code) / Chat (web o IDE) /*  
  *  
@@ -26,13 +26,13 @@ Describe brevemente para qué utilizaste la IA en cada fase del proyecto:
 | | |  
 |-|-|  
 | **Fase del proyecto** | **Propósito (ej. debuggear, generar tests, explicar concepto, refactorizar)** |   
-| Análisis exploratorio del dataset |   |   
-| Implementación del forward pass |   |   
-| Implementación del backward pass |   |   
-| Diseño del optimizador |   |   
-| Experimentos y hyperparámetros |   |   
-| Redacción del reporte |   |   
-| Tests |   |   
+| Análisis exploratorio del dataset | NA  |   
+| Implementación del forward pass |  NA |   
+| Implementación del backward pass |  NA |   
+| Diseño del optimizador | Explicar cocepto, autocompletar  |   
+| Experimentos y hyperparámetros | NA  |   
+| Redacción del reporte | NA  |   
+| Tests | Debuggear  |   
 | Otro: |   |   
    
 
@@ -40,26 +40,29 @@ Describe brevemente para qué utilizaste la IA en cada fase del proyecto:
 Lista 3–5 prompts representativos (no hace falta todos). Si usaste agente  
    
  autónomo, describe las instrucciones iniciales que le diste.  
+
+- Por que la dimension de este objeto no concuerda con lo que necesito en la funcion.
+- Cual es la formula de RMSprop
  
 **4. Uso del contenido generado**  
 Para 2 tareas donde usaste IA, indica cómo integraste el output:  
 | | | | |  
 |-|-|-|-|  
 | **Tarea** | **Herramienta** | **Output de la IA** | **Mi intervención** |   
-|   |   |   |   |   
-|   |   |   |   |   
+| 1  |  ChatGPT | consejo de optimizacion y redaccion  |  |   
+|  1 |  Vscode | Autocompletado de funciones  |   |   
    
 ***Mi intervención*** *: describe qué hiciste después de recibir el output de la IA.*  
  *  
- Ej: "Revisé las derivadas, corregí el chain rule para softmax, añadí comentarios".*  
+ implementar el codigo generado *  
  *  
- Ej: "Apliqué tal cual sin modificar" (esto es válido).*  
+ revisar que concordara lo generado con lo deseado *  
 
 **5. Revisión y edición**  
 Indica qué porcentaje del código generado por IA revisaste o modificaste antes  
    
  de incluirlo en el repo:  
-- Revisé todo el código generado por IA y lo modifiqué según el contexto  
+- Revisé todo el código generado por IA y lo modifiqué según el contexto  X
 - Revisé la mayoría y no fue necesario modificarlo.  
 - No revisé la mayor parte del código generado.  
 - No usé IA (N/A)  
@@ -68,6 +71,8 @@ Indica qué porcentaje del código generado por IA revisaste o modificaste antes
 Menciona cualquier limitación que identificaste en el uso de la IA y las  
    
  consideraciones éticas que tuviste en cuenta (3–5 líneas):  
+
+Al usar de base un codigo previo, realionar las nuevas funciones con l;as antiguas debe de realizarce con cuidado para que realmente se implemente o no haya problemas.
 
 **7. Costo de IA**  
 **Análisis cuantitativo de la conversación**  
@@ -136,20 +141,27 @@ posteriormente llena el siguiente formato:
 La conversación fue analizada mediante una estimación de tres métricas:  
 - Tamaño textual total:  
    
- T_text = ______ tokens.  
+ T_text =8400 tokens.  
 - Carga computacional conversacional estimada:  
    
- T_compute = ______ tokens.  
+ T_compute = 58,000 tokens.  
 - Factor de reprocesamiento:  
    
- R = ______.  
-- Costo total de sesion =   
-Interpretación: ________________________________.  
+ R = 6.9.  
+- Costo total de sesion =   0.12 USD
+Interpretación:La conversación tuvo un tamaño moderado, pero debido a que cada respuesta reutiliza el historial acumulado, el modelo habría procesado aproximadamente siete veces más tokens de los que aparecen explícitamente en el texto final. La mayor parte del costo proviene de las respuestas largas con explicaciones de redes neuronales, MNIST, backpropagation, inicialización de pesos y RMSProp. El costo total estimado sigue siendo relativamente bajo, del orden de unos pocos centavos de dólar.  
+
+
 **Comentario del estudiante** (2–3 líneas): ¿Consideras que estos valores son proporcionales  
    
  al valor que obtuviste de la IA? ¿Hubo sesiones con mucho consumo pero poco valor?  
+
+Si, se me hace proporcional el costo con las respuestas de la IA, aunque habia respuestas donde daba explicaciones mucho mas largas de lo que yo pedia. 
 
 **8. Reflexión general (5–10 líneas)**  
 ¿Cómo te ayudó la IA? ¿Qué hiciste para verificar su output? ¿Aprendiste algo  
    
  del proceso de dirigir la IA? ¿Qué harías diferente la próxima vez?  
+
+La IA me ayudo a entender mejor conceptos y objetos para calcular las operaiones de forma correcta.
+La siguiente vez que utilice proporcionare prompts mas concretos para evitar redundacia en las respuestas o que se generen cosas que no necesito.

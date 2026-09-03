@@ -141,6 +141,9 @@ class Network(object):
         """Return the vector of partial derivatives partial C_x /
         partial a for the output activations."""
         return (output_activations-y)
+    def cross_entropy_cost_derivative(self, output_activations, y):
+        
+        return (output_activations - y) / (output_activations * (1 - output_activations) + 1e-8)  
 
 #### Miscellaneous functions
 def sigmoid(z):
@@ -154,16 +157,31 @@ def sigmoid_prime(z):
 
 #Prueba de la red neuronal
 if __name__ == "__main__":
-    #Datos de entrenamiento
-    training_data = [(np.array([[0],[0]]), np.array([[0]])),
-                     (np.array([[0],[1]]), np.array([[1]])),
-                     (np.array([[1],[0]]), np.array([[1]])),
-                     (np.array([[1],[1]]), np.array([[0]]))]
-    #red
-    net = Network([2, 4, 1])
-    #entrenamiento
-    net.SGD(training_data, epochs=30000, mini_batch_size=4, eta=0.5)
-    #prueba
-    for x, y in training_data:
-        output = net.feedforward(x)
-        print(f"Input: {x.T}, Expected: {y}, Output: {output}") 
+    from tensorflow.keras.datasets import mnist
+
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+    def vectorized_result(j):
+     e = np.zeros((10,1))
+     e[j] = 1.0
+     return e
+
+    training_data = [
+    (x.reshape(784,1)/255, vectorized_result(y))
+    for x,y in zip(x_train,y_train)
+    ]
+
+    test_data = [
+    (x.reshape(784,1)/255, y)
+    for x,y in zip(x_test,y_test)
+    ]
+
+    net = Network([784,30,10])
+
+    net.SGD(
+    training_data,
+    epochs=30,
+    mini_batch_size=10,
+    eta=3.0,
+    test_data=test_data
+    )

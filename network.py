@@ -108,8 +108,8 @@ class Network(object):
             activations.append(activation)          # activation tiene dimensiones (n_{l-1}, 1)  
                                                     #b tiene dimensiones (n_l, 1)
         # backward pass
-        delta = self.cost_derivative(activations[-1], y) * \
-            sigmoid_prime(zs[-1])
+        delta = activations[-1] - y  #self.cost_derivative(activations[-1], y) * \
+            #sigmoid_prime(zs[-1])
         nabla_b[-1] = delta                         #TODO: indicar la dimension de delta
                                                     # Las dimensiones de delta son (n_L,1) con n_L el numero de neuronas en la capa L
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())        #TODO: indicar la dimension de nabla_w
